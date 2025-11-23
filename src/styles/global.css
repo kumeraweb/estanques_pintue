@@ -1,0 +1,92 @@
+@import 'tailwindcss'; /* global.css */
+
+/* Colores coherentes con el logo */
+:root {
+  --color-primary: #24462f;
+  --color-accent: #e6dfd0;
+}
+
+/* Tipografías */
+body {
+  @apply bg-white text-gray-900;
+}
+
+/* Clases personalizadas si queremos algo especial */
+.btn-primary {
+  @apply bg-[var(--color-primary)] text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition;
+}
+
+.section-title {
+  @apply text-3xl font-semibold text-[var(--color-primary)] mb-6;
+}
+
+.text-contrast {
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.55), 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes heroFade {
+  0% {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-hero-fade {
+  animation: heroFade 1.8s ease-out forwards;
+}
+
+/* Fade + slide up (entrada suave premium) */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  opacity: 0;
+  animation: fadeUp 0.9s ease-out forwards;
+}
+
+.animate-fade-up-delay-1 {
+  opacity: 0;
+  animation: fadeUp 0.9s ease-out forwards;
+  animation-delay: 0.3s;
+}
+
+.animate-fade-up-delay-2 {
+  opacity: 0;
+  animation: fadeUp 1s ease-out forwards;
+  animation-delay: 0.55s;
+}
+
+.animate-fade-up-delay-3 {
+  opacity: 0;
+  animation: fadeUp 1s ease-out forwards;
+  animation-delay: 0.8s;
+}
+
+.animate-fade-up-delay-4 {
+  opacity: 0;
+  animation: fadeUp 1s ease-out forwards;
+  animation-delay: 1.05s;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(25px);
+  transition: all 0.9s ease-out;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

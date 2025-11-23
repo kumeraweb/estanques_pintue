@@ -1,0 +1,133 @@
+---
+import { MoreHorizontal, X, MessageCircle } from 'lucide-astro'
+
+const links = [
+  { name: 'Inicio', href: '/' },
+  { name: 'Catálogo', href: '#catalogo' },
+  { name: 'Galería', href: '#galeria' },
+  { name: 'Contacto', href: '#contacto' }
+]
+
+const wa = 'https://wa.me/569XXXXXXXX?text=Hola!%20Quiero%20cotizar%20un%20estanque'
+---
+
+<nav class="fixed top-0 left-0 w-full z-50 bg-transparent text-white">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- LOGO -->
+    <a href="/" class="flex items-center gap-3">
+      <img
+        src="/imgs/estan_pintue.jpeg"
+        alt="Estanques Pintué"
+        class="w-20 h-20 rounded-full border border-white/40"
+      />
+      <span class="hidden sm:block font-semibold text-2xl tracking-wide"> Estanques Pintué </span>
+    </a>
+
+    <!-- DESKTOP MENU -->
+    <ul class="hidden md:flex items-center gap-10 text-white font-medium">
+      {
+        links.map((link) => (
+          <li>
+            <a href={link.href} class="hover:text-green-100 transition duration-200">
+              {link.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- WHATSAPP DESKTOP -->
+    <a
+      href={wa}
+      target="_blank"
+      class="hidden md:flex items-center gap-2 bg-white text-[var(--color-primary)] px-5 py-2.5 rounded-full shadow-md font-semibold hover:bg-gray-100 transition"
+    >
+      <MessageCircle class="w-5 h-5" />
+      WhatsApp
+    </a>
+
+    <!-- BOTÓN MOBILE (3 PUNTOS) -->
+    <button
+      id="mobileMenuBtn"
+      class="md:hidden flex items-center justify-center w-11 h-11
+       bg-white/30 text-white rounded-full
+       backdrop-blur-sm border border-white/40
+       shadow-md hover:bg-white/40 transition"
+    >
+      <MoreHorizontal class="w-6 h-6" />
+    </button>
+  </div>
+</nav>
+
+<!-- OVERLAY MOBILE -->
+<div
+  id="mobileOverlay"
+  class="fixed inset-0 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300 z-40"
+>
+</div>
+
+<!-- MOBILE MENU SLIDE -->
+<div
+  id="mobileMenu"
+  class="md:hidden fixed top-0 right-0 h-full w-72 bg-white shadow-xl transform translate-x-full transition-all duration-300 p-6 flex flex-col gap-6 z-50"
+>
+  <!-- BOTÓN CERRAR -->
+  <button id="closeMenu" class="self-end text-gray-700 hover:text-black">
+    <X class="w-7 h-7" />
+  </button>
+
+  <!-- LINKS -->
+  <ul class="flex flex-col gap-5 text-[var(--color-primary)] font-semibold text-lg">
+    {
+      links.map((link) => (
+        <li>
+          <a href={link.href} class="block py-1">
+            {link.name}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <!-- WHATSAPP -->
+  <a
+    href={wa}
+    class="mt-4 bg-[var(--color-primary)] text-white px-5 py-3 rounded-xl text-center text-lg font-bold shadow hover:opacity-90 transition"
+  >
+    WhatsApp
+  </a>
+</div>
+
+<!-- SCRIPT -->
+<script is:inline>
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('mobileMenuBtn')
+    const menu = document.getElementById('mobileMenu')
+    const close = document.getElementById('closeMenu')
+    const overlay = document.getElementById('mobileOverlay')
+
+    const openMenu = () => {
+      menu.classList.remove('translate-x-full')
+      menu.classList.add('translate-x-0')
+
+      overlay.classList.remove('pointer-events-none')
+      overlay.classList.add('opacity-100')
+
+      document.body.classList.add('overflow-hidden')
+    }
+
+    const closeMenuFn = () => {
+      menu.classList.remove('translate-x-0')
+      menu.classList.add('translate-x-full')
+
+      overlay.classList.add('pointer-events-none')
+      overlay.classList.remove('opacity-100')
+
+      document.body.classList.remove('overflow-hidden')
+    }
+
+    btn?.addEventListener('click', openMenu)
+    close?.addEventListener('click', closeMenuFn)
+    overlay?.addEventListener('click', closeMenuFn)
+  })
+</script>

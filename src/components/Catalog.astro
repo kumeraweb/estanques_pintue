@@ -1,0 +1,47 @@
+---
+import { catalog } from '../data/catalog.js'
+import { MessageCircle } from 'lucide-astro'
+
+const wa = 'https://wa.me/569XXXXXXXX?text=Hola!%20Quiero%20cotizar%20un%20producto'
+---
+
+<section id="catalogo" class="py-24 px-6 reveal">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="section-title mb-2">Catálogo Completo</h2>
+    <p class="text-gray-600 mb-12">
+      Estanques, barricas, plantas acuáticas y accesorios seleccionados.
+    </p>
+
+    <!-- GRID POR CATEGORÍAS -->
+    {
+      Object.entries(catalog).map(([category, items]) => (
+        <div class="mb-16">
+          <h3 class="text-2xl font-bold text-[var(--color-primary)] mb-6 capitalize">{category}</h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {items.map((item) => (
+              <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition">
+                <img src={item.img} alt={item.name} class="w-full h-48 object-cover" />
+
+                <div class="p-5">
+                  <h4 class="text-xl font-semibold text-[var(--color-primary)]">{item.name}</h4>
+
+                  <p class="text-gray-600 text-sm mt-2 mb-4">{item.desc}</p>
+
+                  <a
+                    href={wa}
+                    target="_blank"
+                    class="w-full flex items-center justify-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:opacity-90 transition font-medium"
+                  >
+                    <MessageCircle class="w-4 h-4" />
+                    Cotizar
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

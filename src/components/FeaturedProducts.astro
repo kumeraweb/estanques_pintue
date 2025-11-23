@@ -1,0 +1,56 @@
+---
+const products = [
+  {
+    name: 'Barrica Acuática 80L',
+    img: '/imgs/1.jpeg',
+    desc: 'Ideal para patios pequeños o terrazas.',
+    price: 'desde $79.000'
+  },
+  {
+    name: 'Barrica Acuática 120L',
+    img: '/imgs/2.jpeg',
+    desc: 'Mayor profundidad y espacio para plantas.',
+    price: 'desde $99.000'
+  },
+  {
+    name: 'Estanque Koi Premium',
+    img: '/imgs/3.jpeg',
+    desc: 'Diseño completo con peces y plantas.',
+    price: 'desde $159.000'
+  }
+]
+---
+
+<section id="destacados" class="py-24 px-6 reveal">
+  <div class="max-w-6xl mx-auto text-center mb-12">
+    <h2 class="text-4xl font-bold text-[var(--color-primary)] mb-3">Modelos más solicitados</h2>
+    <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+      Los favoritos de nuestros clientes, listos para personalizar según tu espacio.
+    </p>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
+    {
+      products.map((item) => (
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group">
+          <img
+            src={item.img}
+            alt={item.name}
+            class="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
+          />
+          <div class="p-6 text-left">
+            <h3 class="text-xl font-semibold text-[var(--color-primary)] mb-1">{item.name}</h3>
+            <p class="text-gray-600 text-sm mb-4">{item.desc}</p>
+            <p class="text-lg font-bold text-[var(--color-primary)] mb-4">{item.price}</p>
+            <a
+              href="#contacto"
+              class="inline-block bg-[var(--color-primary)] text-white px-4 py-2 rounded-full font-semibold hover:opacity-90 transition"
+            >
+              Cotizar
+            </a>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

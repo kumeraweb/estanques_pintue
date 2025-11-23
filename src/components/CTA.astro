@@ -1,0 +1,30 @@
+---
+import { MessageCircle } from 'lucide-astro'
+
+const wa = 'https://wa.me/569XXXXXXXX?text=Hola!%20Quiero%20saber%20más%20sobre%20los%20estanques'
+---
+
+<section class="relative py-24 px-6 text-center reveal">
+  <!-- Fondo suave -->
+  <div class="absolute inset-0 bg-[var(--color-accent)]/30 backdrop-blur-sm"></div>
+
+  <div class="relative z-10 max-w-3xl mx-auto">
+    <h2 class="text-4xl sm:text-5xl font-extrabold text-[var(--color-primary)] mb-4">
+      ¿Listo para transformar tu espacio?
+    </h2>
+
+    <p class="text-lg sm:text-xl text-gray-700 mb-10">
+      Cotiza tu estanque, barrica o instalación personalizada hoy mismo. Atención rápida vía
+      WhatsApp.
+    </p>
+
+    <a
+      href={wa}
+      target="_blank"
+      class="inline-flex items-center gap-3 bg-[var(--color-primary)] text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:opacity-90 transition"
+    >
+      <MessageCircle class="w-6 h-6" />
+      Cotizar Ahora
+    </a>
+  </div>
+</section>
