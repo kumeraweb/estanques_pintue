@@ -1,8 +1,9 @@
 ---
 import { MessageCircle, Instagram } from 'lucide-astro'
+import { LINKS } from '../data/site'
 
-const wa = 'https://wa.me/569XXXXXXXX?text=Hola!%20Quiero%20cotizar%20un%20estanque'
-const ig = 'https://www.instagram.com/estanques.pintue/'
+const wa = LINKS.wa()
+const ig = LINKS.ig()
 ---
 
 <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
