@@ -1,5 +1,8 @@
 ---
 const { logo = '/imgs/estan_pintue.jpeg' } = Astro.props
+import { LINKS } from '../data/site'
+
+const wa = LINKS.wa()
 ---
 
 <section class="min-h-[80vh] flex flex-col items-center justify-center text-center px-6">
@@ -12,7 +15,7 @@ const { logo = '/imgs/estan_pintue.jpeg' } = Astro.props
   </p>
 
   <a
-    href="https://wa.me/56977995073"
+    href={wa}
     target="_blank"
     class="mt-8 inline-block bg-green-500 text-white px-6 py-3 rounded-full shadow hover:bg-green-600 transition"
   >

@@ -19,7 +19,7 @@ const { title, description, domain, image, locale } = SITE
     <link rel="canonical" href={domain} />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="/imgs/estan_pintue.jpg" type="image/jpeg" />
+    <link rel="shortcut icon" href="/imgs/estan_pintue.jpeg" type="image/jpeg" />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -34,6 +34,36 @@ const { title, description, domain, image, locale } = SITE
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Estanques Pintué",
+        "url": "https://www.estanquespintue.cl",
+        "image": "https://www.estanquespintue.cl/images/og-estanquespintue.png",
+        "description": "Fabricación y venta de estanques de agua en Pintué. Estanques de alta resistencia, entrega rápida y atención personalizada.",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Pintué, Paine",
+          "addressLocality": "Paine",
+          "addressRegion": "Metropolitana",
+          "addressCountry": "CL"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": -33.849,
+          "longitude": -70.818
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+56977995073",
+          "contactType": "customer service",
+          "areaServed": "CL"
+        },
+        "sameAs": ["https://www.instagram.com/estanquespintue?igsh=MWxkNGF5cHcybHNkZQ=="]
+      }
+    </script>
   </head>
 
   <body class="bg-white text-gray-900">
