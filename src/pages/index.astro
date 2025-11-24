@@ -1,5 +1,7 @@
 ---
+const enConstruccion = true
 import BaseLayout from '../layouts/BaseLayout.astro'
+import UnderConstruction from '../components/UnderConstruction.astro'
 import Navbar from '../components/Navbar.astro'
 import Hero from '../components/Hero.astro'
 import WhyUs from '../components/WhyUs.astro'
@@ -10,11 +12,19 @@ import Footer from '../components/Footer.astro'
 ---
 
 <BaseLayout>
-  <Navbar />
-  <Hero />
-  <WhyUs />
-  <FeaturedProducts />
-  <Catalog />
-  <CTA />
-  <Footer />
+  {
+    enConstruccion ? (
+      <UnderConstruction />
+    ) : (
+      <>
+        <Navbar />
+        <Hero />
+        <WhyUs />
+        <FeaturedProducts />
+        <Catalog />
+        <CTA />
+        <Footer />
+      </>
+    )
+  }
 </BaseLayout>

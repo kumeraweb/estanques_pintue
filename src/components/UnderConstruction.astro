@@ -1,0 +1,21 @@
+---
+const { logo = '/imgs/estan_pintue.jpeg' } = Astro.props
+---
+
+<section class="min-h-[80vh] flex flex-col items-center justify-center text-center px-6">
+  <img src={logo} alt="Estanques Pintué" class="w-40 h-auto opacity-90 mb-6" />
+
+  <h1 class="text-3xl font-bold text-gray-800">Sitio en construcción</h1>
+
+  <p class="text-gray-600 mt-4 text-lg max-w-md">
+    Estamos trabajando en una mejor experiencia. Puedes contactarnos directamente por WhatsApp.
+  </p>
+
+  <a
+    href="https://wa.me/56977995073"
+    target="_blank"
+    class="mt-8 inline-block bg-green-500 text-white px-6 py-3 rounded-full shadow hover:bg-green-600 transition"
+  >
+    Hablar por WhatsApp
+  </a>
+</section>
