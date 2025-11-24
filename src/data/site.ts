@@ -1,3 +1,14 @@
 export const SITE = {
-  title: 'Estanques Pintué | Estanques Acuáticos y Barricas'
+  name: 'Estanques Pintué',
+  title: 'Estanques Pintué – Fabricación y Venta de Estanques de Agua en Pintué',
+  description:
+    'Fabricamos estanques de agua de alta resistencia en Pintué. Calidad garantizada, entrega rápida y atención personalizada.',
+  domain: 'https://www.estanquespintue.cl',
+  image: '/images/og-estanquespintue.png', // puedes cambiar esto luego
+  locale: 'es_CL'
+}
+
+export const LINKS = {
+  wa: () => 'https://wa.me/56977995073',
+  ig: () => 'https://www.instagram.com/estanquespintue?igsh=MWxkNGF5cHcybHNkZQ=='
 }

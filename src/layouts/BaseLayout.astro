@@ -1,16 +1,39 @@
 ---
 import { SITE } from '../data/site'
-const { title } = SITE
 import '../styles/global.css'
 import FloatingButtons from '../components/FloatingButtons.astro'
+
+const { title, description, domain, image, locale } = SITE
 ---
 
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Primary Meta -->
     <title>{title}</title>
-    <link rel="shortcut icon" href="images/estan_pintue.jpgeg" type="image/x-icon" />
+    <meta name="description" content={description} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={domain} />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/imgs/estan_pintue.jpg" type="image/jpeg" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={domain} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={image} />
+    <meta property="og:locale" content={locale} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
   </head>
 
   <body class="bg-white text-gray-900">
