@@ -9,7 +9,9 @@ export const SITE = {
 }
 
 export const LINKS = {
-  wa: () =>
-    'https://wa.me/56977995073?text=Hola%20!%20Me%20gustaría%20cotizar%20un%20estanque%20de%20agua.',
+  wa: () => {
+    const msg = encodeURIComponent('Hola! Me gustaría cotizar un estanque de agua.')
+    return `https://wa.me/56977995073?text=${msg}`
+  },
   ig: () => 'https://www.instagram.com/estanquespintue/'
 }
