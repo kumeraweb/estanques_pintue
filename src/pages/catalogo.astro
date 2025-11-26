@@ -1,62 +1,101 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import { MessageCircle } from 'lucide-astro'
+import ProductCard from '../components/ProductCard.astro'
 import { supabase } from '../lib/supabase'
-import { LINKS } from '../data/site'
 
-// Obtener productos
+// Obtener productos con su categoría
 const { data: products, error } = await supabase
   .from('products')
-  .select('*')
-  .order('category', { ascending: true })
+  .select('*, categories(name)')
+  .order('category_id', { ascending: true })
+  .order('title', { ascending: true })
 
 if (error) console.error('Error cargando productos:', error)
 
-// Armar categorías
+// Lista de categorías prioritarias
+const priorityOrder = [
+  'Barricas acuáticas con plantas',
+  'Barricas acuáticas con peces Koi y plantas',
+  'Barricas Maceteros',
+  'Proyectos Personalizados'
+]
+
+// Organizar catálogo por categorías
 const catalog: Record<string, any[]> = {}
 
 for (const p of products ?? []) {
-  const cat = p.category ?? 'Sin categoría'
-  if (!catalog[cat]) catalog[cat] = []
-  catalog[cat].push(p)
+  const catName = p.categories?.name ?? 'Sin categoría'
+  if (!catalog[catName]) catalog[catName] = []
+  catalog[catName].push(p)
 }
+
+// Ordenar categorías con prioridad primero
+const orderedCategories = Object.keys(catalog).sort((a, b) => {
+  const idxA = priorityOrder.indexOf(a)
+  const idxB = priorityOrder.indexOf(b)
+
+  if (idxA !== -1 && idxB !== -1) return idxA - idxB
+  if (idxA !== -1) return -1
+  if (idxB !== -1) return 1
+
+  return a.localeCompare(b)
+})
 ---
 
 <BaseLayout title="Catálogo Completo">
   <section class="py-32">
     <div class="max-w-6xl mx-auto px-6">
       <h1 class="section-title mb-4">Catálogo Completo</h1>
-      <p class="text-gray-600 mb-12">Estanques, plantas, barricas y más !</p>
+      <p class="text-gray-600 mb-12">
+        Estanques, plantas, barricas y más. Productos seleccionados y categorizados para ayudarte a
+        encontrar lo que buscas.
+      </p>
 
       {
-        Object.entries(catalog).map(([cat, items]) => (
-          <div class="mb-16">
-            <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-6 capitalize">{cat}</h2>
+        orderedCategories.map((cat) => {
+          const items = catalog[cat]
+          const isPriority = priorityOrder.includes(cat)
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-              {items.map((item) => (
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition">
-                  <img src={item.image_url} class="w-full h-48 object-cover" alt={item.title} />
-
-                  <div class="p-5">
-                    <h3 class="text-xl font-semibold text-[var(--color-primary)]">{item.title}</h3>
-
-                    <p class="text-gray-600 text-sm mt-2 mb-4">{item.description}</p>
-
-                    <a
-                      href={LINKS.wa(`Hola! Me interesa el producto: ${item.title}`)}
-                      target="_blank"
-                      class="w-full flex items-center justify-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:opacity-90 transition font-medium"
-                    >
-                      <MessageCircle class="w-4 h-4" />
-                      Cotizar por WhatsApp
-                    </a>
-                  </div>
+          return (
+            <div class="mb-20">
+              {isPriority && (
+                <div class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                  Categoría destacada
                 </div>
-              ))}
+              )}
+
+              <h2 class="text-3xl font-bold text-[var(--color-primary)] mb-8">{cat}</h2>
+
+              {/* 🔥 MOBILE — CARRUSEL HORIZONTAL */}
+              <div class="md:hidden flex gap-6 overflow-x-auto whitespace-nowrap pb-4 snap-x snap-mandatory">
+                {items.map((item) => (
+                  <div class="min-w-[260px] snap-start">
+                    <ProductCard
+                      title={item.title}
+                      description={item.description}
+                      price={item.price}
+                      image_url={item.image_url}
+                      category_name={cat}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* 🖥️ DESKTOP — GRID NORMAL */}
+              <div class="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-10">
+                {items.map((item) => (
+                  <ProductCard
+                    title={item.title}
+                    description={item.description}
+                    price={item.price}
+                    image_url={item.image_url}
+                    category_name={cat}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))
+          )
+        })
       }
     </div>
   </section>

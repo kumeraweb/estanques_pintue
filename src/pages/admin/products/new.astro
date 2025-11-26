@@ -1,7 +1,8 @@
 ---
+// @ts-check
 export const prerender = false
 
-import BaseLayout from '../../../layouts/BaseLayout.astro'
+import AdminLayout from '../../../layouts/AdminLayout.astro'
 import { supabase } from '../../../lib/supabase'
 
 // Proteger ruta
@@ -12,7 +13,16 @@ if (!sessionData.session) {
 
 let errorMessage = null
 
-// Si POST → guardar producto
+// Cargar categorías
+const { data: categories, error: catError } = await supabase
+  .from('categories')
+  .select('*')
+  .order('name', { ascending: true })
+
+if (catError) {
+  console.error(catError)
+}
+
 if (Astro.request.method === 'POST') {
   try {
     const form = await Astro.request.formData()
@@ -20,7 +30,7 @@ if (Astro.request.method === 'POST') {
     const title = form.get('title') as string
     const description = form.get('description') as string | null
     const price = Number(form.get('price'))
-    const category = form.get('category') as string | null
+    const category_id = form.get('category_id') as string | null
     const featured = form.get('featured') === 'on'
     const imageFile = form.get('image') as File | null
 
@@ -31,14 +41,9 @@ if (Astro.request.method === 'POST') {
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('products')
-        .upload(fileName, imageFile, {
-          contentType: imageFile.type
-        })
+        .upload(fileName, imageFile, { contentType: imageFile.type })
 
-      if (uploadError) {
-        console.error(uploadError)
-        throw new Error('Error subiendo imagen')
-      }
+      if (uploadError) throw new Error('Error subiendo imagen')
 
       const { data: publicUrl } = supabase.storage.from('products').getPublicUrl(uploadData.path)
 
@@ -49,15 +54,12 @@ if (Astro.request.method === 'POST') {
       title,
       description,
       price,
-      category,
+      category_id,
       featured,
       image_url
     })
 
-    if (insertError) {
-      console.error(insertError)
-      throw new Error('Error guardando producto')
-    }
+    if (insertError) throw new Error('Error guardando producto')
 
     return Astro.redirect('/admin/products')
   } catch (err) {
@@ -67,8 +69,8 @@ if (Astro.request.method === 'POST') {
 }
 ---
 
-<BaseLayout title="Nuevo Producto">
-  <section class="min-h-screen px-6 py-10 bg-gray-100">
+<AdminLayout>
+  <section class="min-h-screen px-6 py-24 bg-gray-100">
     <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-8 text-center">
       ➕ Crear Nuevo Producto
     </h1>
@@ -92,9 +94,13 @@ if (Astro.request.method === 'POST') {
           <input type="number" name="price" min="0" class="border rounded-lg px-4 py-3 w-full" />
         </div>
 
+        <!-- SELECT dinámico -->
         <div>
           <label class="font-semibold">Categoría</label>
-          <input type="text" name="category" class="border rounded-lg px-4 py-3 w-full" />
+          <select name="category_id" required class="border rounded-lg px-4 py-3 w-full bg-white">
+            <option value="">Seleccionar categoría...</option>
+            {categories?.map((c) => <option value={c.id}>{c.name}</option>)}
+          </select>
         </div>
 
         <div>
@@ -118,4 +124,4 @@ if (Astro.request.method === 'POST') {
       </form>
     </div>
   </section>
-</BaseLayout>
+</AdminLayout>

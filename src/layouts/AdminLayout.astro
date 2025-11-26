@@ -1,0 +1,108 @@
+---
+import '../styles/global.css'
+import { Home, Package, PlusCircle, Image, LogOut, Menu, X } from 'lucide-astro'
+
+const menu = [
+  { label: 'Dashboard', href: '/admin', icon: Home },
+  { label: 'Productos', href: '/admin/products', icon: Package },
+  { label: 'Crear Producto', href: '/admin/products/new', icon: PlusCircle },
+  { label: 'Banners', href: '/admin/banners', icon: Image }
+]
+
+const current = Astro.url.pathname
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel Admin — Estanques Pintué</title>
+
+    <link rel="shortcut icon" href="/imgs/estan_pintue.jpeg" type="image/jpeg" />
+  </head>
+
+  <body class="bg-gray-100 min-h-screen flex">
+    <!-- MOBILE TOP NAV -->
+    <header
+      class="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-md z-40 flex items-center justify-between px-4 py-3"
+    >
+      <div class="flex items-center gap-3">
+        <img src="/imgs/estan_pintue.jpeg" class="w-8 h-8 rounded" alt="" />
+        <span class="font-bold text-[var(--color-primary)]">Admin Panel</span>
+      </div>
+
+      <button id="openMenu" class="text-gray-700">
+        <Menu class="w-7 h-7" />
+      </button>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside
+      id="sidebar"
+      class="fixed lg:static top-0 left-0 h-full w-64 bg-white shadow-lg p-6 flex flex-col
+             transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50"
+    >
+      <!-- Close button mobile -->
+      <button id="closeMenu" class="lg:hidden absolute top-4 right-4 text-gray-700">
+        <X class="w-6 h-6" />
+      </button>
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3 mb-10 mt-10 lg:mt-0">
+        <img src="/imgs/estan_pintue.jpeg" class="w-10 h-10 rounded-lg" alt="" />
+        <h2 class="text-xl font-bold text-[var(--color-primary)]">Admin Panel</h2>
+      </div>
+
+      <!-- Menu -->
+      <nav class="flex flex-col gap-2">
+        {
+          menu.map((item) => {
+            const Icon = item.icon
+            const active = current === item.href
+
+            return (
+              <a
+                href={item.href}
+                class={`flex items-center gap-3 px-4 py-3 rounded-lg transition
+                  ${active ? 'bg-[var(--color-primary)] text-white' : 'text-gray-700 hover:bg-gray-100'}
+                `}
+              >
+                <Icon class="w-5 h-5" />
+                {item.label}
+              </a>
+            )
+          })
+        }
+      </nav>
+
+      <div class="mt-auto pt-10">
+        <a
+          href="/admin/logout"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 transition"
+        >
+          <LogOut class="w-5 h-5" />
+          Cerrar sesión
+        </a>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="flex-1 p-6 sm:p-10 mt-16 lg:mt-0">
+      <slot />
+    </main>
+
+    <script is:inline>
+      const sidebar = document.getElementById('sidebar')
+      const openMenu = document.getElementById('openMenu')
+      const closeMenu = document.getElementById('closeMenu')
+
+      openMenu?.addEventListener('click', () => {
+        sidebar.classList.remove('-translate-x-full')
+      })
+
+      closeMenu?.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full')
+      })
+    </script>
+  </body>
+</html>

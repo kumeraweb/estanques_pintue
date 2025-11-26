@@ -12,7 +12,7 @@ const links = [
 const wa = LINKS.wa()
 ---
 
-<nav class="fixed top-0 left-0 w-full z-50 bg-transparent text-white">
+<nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
   <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
     <!-- LOGO -->
     <a href="/" class="flex items-center gap-3">
@@ -25,11 +25,14 @@ const wa = LINKS.wa()
     </a>
 
     <!-- DESKTOP MENU -->
-    <ul class="hidden md:flex items-center gap-10 text-white font-medium">
+    <ul
+      id="desktopLinks"
+      class="hidden md:flex items-center gap-10 font-medium transition-colors duration-300"
+    >
       {
         links.map((link) => (
           <li>
-            <a href={link.href} class="hover:text-green-100 transition duration-200">
+            <a href={link.href} class="nav-link transition duration-200">
               {link.name}
             </a>
           </li>
@@ -99,36 +102,70 @@ const wa = LINKS.wa()
   </a>
 </div>
 
-<!-- SCRIPT -->
 <script is:inline>
   window.addEventListener('DOMContentLoaded', () => {
+    const navbar = document.getElementById('navbar')
+    const desktopLinks = document.querySelectorAll('.nav-link')
+
+    const updateNavbar = () => {
+      if (window.scrollY > 50) {
+        // Fondo blanco
+        navbar.classList.add('bg-white', 'shadow-md')
+        navbar.classList.remove('bg-transparent')
+
+        // Texto verde oscuro
+        desktopLinks.forEach((el) => {
+          el.classList.add('text-[var(--color-primary)]')
+          el.classList.remove('text-white')
+        })
+      } else {
+        // Fondo transparente
+        navbar.classList.add('bg-transparent')
+        navbar.classList.remove('bg-white', 'shadow-md')
+
+        // Texto blanco
+        desktopLinks.forEach((el) => {
+          el.classList.add('text-white')
+          el.classList.remove('text-[var(--color-primary)]')
+        })
+      }
+    }
+
+    updateNavbar()
+    window.addEventListener('scroll', updateNavbar)
+
+    // ------------------------
+    // Tu código mobile (sin cambios)
+    // ------------------------
+
     const btn = document.getElementById('mobileMenuBtn')
     const menu = document.getElementById('mobileMenu')
     const close = document.getElementById('closeMenu')
     const overlay = document.getElementById('mobileOverlay')
+    const links = menu.querySelectorAll('a')
 
     const openMenu = () => {
       menu.classList.remove('translate-x-full')
       menu.classList.add('translate-x-0')
-
       overlay.classList.remove('pointer-events-none')
       overlay.classList.add('opacity-100')
-
       document.body.classList.add('overflow-hidden')
     }
 
     const closeMenuFn = () => {
       menu.classList.remove('translate-x-0')
       menu.classList.add('translate-x-full')
-
       overlay.classList.add('pointer-events-none')
       overlay.classList.remove('opacity-100')
-
       document.body.classList.remove('overflow-hidden')
     }
 
     btn?.addEventListener('click', openMenu)
     close?.addEventListener('click', closeMenuFn)
     overlay?.addEventListener('click', closeMenuFn)
+
+    links.forEach((a) => {
+      a.addEventListener('click', closeMenuFn)
+    })
   })
 </script>

@@ -1,69 +1,71 @@
 ---
+import ProductCard from './ProductCard.astro'
 import { supabase } from '../lib/supabase'
-import { MessageCircle } from 'lucide-astro'
-import { LINKS } from '../data/site'
 
-const { data: rawFeatured, error } = await supabase
+// Obtener destacados con categoría incluida
+const { data: featured, error } = await supabase
   .from('products')
-  .select('*')
+  .select('*, categories(name)')
   .eq('featured', true)
   .order('created_at', { ascending: false })
 
-if (error) {
-  console.error('Error cargando destacados:', error)
-}
+if (error) console.error(error)
 
-const featured = rawFeatured ?? []
-
-LINKS.wa()
+const featuredList = featured ?? []
 ---
 
 <section id="destacados" class="py-24 px-6 reveal">
   <div class="max-w-6xl mx-auto text-center mb-12">
-    <h2 class="text-4xl font-bold text-[var(--color-primary)] mb-3">Modelos más solicitados</h2>
+    <h2 class="text-4xl font-bold text-[var(--color-primary)] mb-3">¡Destacados!</h2>
     <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-      Los favoritos de nuestros clientes, listos para personalizar según tu espacio.
+      Los favoritos de nuestros clientes. Visite nuestro catálogo completo para conocer más.
     </p>
   </div>
 
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
-    {
-      (featured ?? []).length > 0 ? (
-        featured.map((item) => (
-          <div class="bg-white rounded-2xl shadow-lg overflow-hidden group">
-            <img
-              src={item.image_url}
-              alt={item.title}
-              class="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
-            />
+  {
+    featuredList.length > 0 ? (
+      <>
+        <!-- 📱 MOBILE: CARRUSEL -->
+        <div class="md:hidden flex gap-6 overflow-x-auto whitespace-nowrap pb-4 snap-x snap-mandatory max-w-6xl mx-auto">
+          {
+            featuredList.map((item) => (
+              <div class="min-w-[260px] snap-start">
+                <ProductCard
+                  title={item.title}
+                  description={item.description}
+                  price={item.price}
+                  image_url={item.image_url}
+                  category_name={item.categories?.name}
+                  isFeatured={true}
+                />
+              </div>
+            ))
+          }
+        </div>
 
-            <div class="p-6 text-left">
-              <h3 class="text-xl font-semibold text-[var(--color-primary)] mb-1">{item.title}</h3>
+        <!-- 🖥️ DESKTOP: GRID -->
+        <div class="hidden md:grid sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
+          {
+            featuredList.map((item) => (
+              <ProductCard
+                title={item.title}
+                description={item.description}
+                price={item.price}
+                image_url={item.image_url}
+                category_name={item.categories?.name}
+                isFeatured={true}
+              />
+            ))
+          }
+        </div>
+      </>
+    ) : (
+      <p class="text-center text-gray-500 col-span-3 py-6">
+        No hay productos destacados por ahora.
+      </p>
+    )
+  }
 
-              <p class="text-gray-600 text-sm mb-4">{item.description ?? ''}</p>
-
-              {item.price && (
-                <p class="text-lg font-bold text-[var(--color-primary)] mb-4">${item.price}</p>
-              )}
-
-              <a
-                href={LINKS.wa(`Hola! Me interesa el producto destacado: ${item.title}`)}
-                target="_blank"
-                class="flex flex-row justify-center bg-[var(--color-primary)] text-white px-4 py-2 w-full rounded-full font-semibold hover:opacity-90 transition flex items-center gap-2"
-              >
-                <MessageCircle class="w-4 h-4" />
-                Cotizar
-              </a>
-            </div>
-          </div>
-        ))
-      ) : (
-        <p class="text-center text-gray-500 col-span-3 py-6">
-          No hay productos destacados por ahora.
-        </p>
-      )
-    }
-  </div>
   <div class="text-center mt-12">
     <a
       href="/catalogo"

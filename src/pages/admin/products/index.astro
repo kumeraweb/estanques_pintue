@@ -1,7 +1,7 @@
 ---
 export const prerender = false
 
-import BaseLayout from '../../../layouts/BaseLayout.astro'
+import AdminLayout from '../../../layouts/AdminLayout.astro'
 import { supabase } from '../../../lib/supabase'
 import type { Product } from '../../../types/database'
 
@@ -11,109 +11,181 @@ if (!sessionData.session) {
   return Astro.redirect('/admin/login')
 }
 
-// Obtener productos
+// Obtener productos con categoría incluida
 const { data: products, error } = await supabase
   .from('products')
-  .select('*')
+  .select('*, categories(name)')
   .order('created_at', { ascending: false })
 
 if (error) {
   console.error('Error cargando productos:', error)
 }
----
 
-<BaseLayout title="Productos">
+// Obtener categorías
+const { data: categories } = await supabase
+  .from('categories')
+  .select('*')
+  .order('name', { ascending: true })
+---
+<AdminLayout>
   <section class="min-h-screen px-6 py-10 bg-gray-100">
     <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-8 text-center">📦 Productos</h1>
 
-    <div class="flex justify-center mb-8">
+    <!-- BOTÓN CREAR -->
+    <div class="flex justify-center mb-10">
       <a href="/admin/products/new" class="btn-primary">➕ Crear Producto</a>
     </div>
 
-    <div class="bg-white shadow-xl rounded-xl p-6 max-w-5xl mx-auto">
+    <!-- 🔎 FILTROS -->
+    <div class="bg-white shadow-xl rounded-xl p-6 max-w-5xl mx-auto mb-6 flex flex-col sm:flex-row gap-4">
 
-  {products && products.length > 0 ? (
-    <>
-      <!-- DESKTOP TABLE -->
-      <table class="hidden sm:table w-full border-collapse">
-        <thead>
-          <tr class="text-left border-b">
-            <th class="py-3 px-2">Imagen</th>
-            <th class="py-3 px-2">Título</th>
-            <th class="py-3 px-2">Precio</th>
-            <th class="py-3 px-2">Destacado</th>
-            <th class="py-3 px-2">Acciones</th>
-          </tr>
-        </thead>
+      <!-- SELECT CATEGORÍA -->
+      <select id="filterCategory" class="border rounded-lg px-4 py-2 w-full sm:w-60">
+        <option value="all">Todas las categorías</option>
+        {
+          categories?.map((cat) => (
+            <option value={cat.name}>{cat.name}</option>
+          ))
+        }
+      </select>
 
-        <tbody>
-          {products.map((p: Product) => (
-            <tr class="border-b hover:bg-gray-50">
-              <td class="py-2 px-2">
-                {p.image_url ? (
-                  <img src={p.image_url} alt={p.title} class="w-16 h-16 object-cover rounded-lg" />
-                ) : (
-                  <span class="text-gray-400 italic">Sin imagen</span>
-                )}
-              </td>
+      <!-- BUSCADOR -->
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Buscar producto..."
+        class="border rounded-lg px-4 py-2 w-full sm:flex-1"
+      />
+    </div>
 
-              <td class="py-2 px-2 font-medium">{p.title}</td>
+    <!-- TABLA / CARDS -->
+    <div class="bg-white shadow-xl rounded-xl p-6 max-w-5xl mx-auto" id="productsContainer">
+      
+      <!-- MENSAJE SI NO HAY -->
+      {products && products.length > 0 ? (
+        <>
+          <!-- 🖥 DESKTOP TABLE -->
+          <table class="hidden sm:table w-full border-collapse" id="desktopTable">
+            <thead>
+              <tr class="text-left border-b">
+                <th class="py-3 px-2">Imagen</th>
+                <th class="py-3 px-2">Título</th>
+                <th class="py-3 px-2">Categoría</th>
+                <th class="py-3 px-2">Precio</th>
+                <th class="py-3 px-2">Destacado</th>
+                <th class="py-3 px-2">Acciones</th>
+              </tr>
+            </thead>
 
-              <td class="py-2 px-2">${p.price ?? '-'}</td>
+            <tbody id="desktopBody">
+              {
+                products.map((p: Product & { categories?: { name: string } }) => (
+                  <tr
+                    class="border-b hover:bg-gray-50 productRow"
+                    data-title={p.title.toLowerCase()}
+                    data-category={p.categories?.name ?? 'Sin categoría'}
+                  >
+                    <td class="py-2 px-2">
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.title} class="w-16 h-16 object-cover rounded-lg" />
+                      ) : (
+                        <span class="text-gray-400 italic">Sin imagen</span>
+                      )}
+                    </td>
 
-              <td class="py-2 px-2">{p.featured ? '⭐' : '—'}</td>
+                    <td class="py-2 px-2 font-medium">{p.title}</td>
 
-              <td class="py-2 px-2 flex gap-3">
-                <a href={`/admin/products/${p.id}`} class="text-blue-600 hover:underline">Editar</a>
-                <a href={`/admin/products/delete?id=${p.id}`} class="text-red-600 hover:underline">Eliminar</a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                    <td class="py-2 px-2">{p.categories?.name ?? 'Sin categoría'}</td>
 
-      <!-- MOBILE CARDS -->
-      <div class="sm:hidden flex flex-col gap-4">
-        {products.map((p: Product) => (
-          <div class="border rounded-xl p-4 flex gap-4 shadow hover:shadow-md transition">
-            <img
-              src={p.image_url}
-              alt={p.title}
-              class="w-20 h-20 object-cover rounded-lg"
-            />
+                    <td class="py-2 px-2">${p.price ?? '-'}</td>
 
-            <div class="flex-1">
-              <h3 class="font-semibold text-[var(--color-primary)]">{p.title}</h3>
+                    <td class="py-2 px-2">{p.featured ? '⭐' : '—'}</td>
 
-              <p class="text-gray-700 text-sm mt-1">
-                Precio: <strong>${p.price ?? '-'}</strong>
-              </p>
+                    <td class="py-2 px-2 flex gap-3">
+                      <a href={`/admin/products/${p.id}`} class="text-blue-600 hover:underline">Editar</a>
+                      <a href={`/admin/products/delete?id=${p.id}`} class="text-red-600 hover:underline">Eliminar</a>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
 
-              <p class="text-gray-700 text-sm">
-                Destacado: {p.featured ? '⭐' : '—'}
-              </p>
-
-              <div class="flex gap-4 mt-3 text-sm">
-                <a href={`/admin/products/${p.id}`} class="text-blue-600 hover:underline">
-                  Editar
-                </a>
-                <a
-                  href={`/admin/products/delete?id=${p.id}`}
-                  class="text-red-600 hover:underline"
+          <!-- 📱 MOBILE CARDS -->
+          <div class="sm:hidden flex flex-col gap-4" id="mobileList">
+            {
+              products.map((p: Product & { categories?: { name: string } }) => (
+                <div
+                  class="border rounded-xl p-4 flex gap-4 shadow-md productCard"
+                  data-title={p.title.toLowerCase()}
+                  data-category={p.categories?.name ?? 'Sin categoría'}
                 >
-                  Eliminar
-                </a>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+                  <img src={p.image_url} class="w-20 h-20 object-cover rounded-lg" />
 
-    </>
-  ) : (
-    <p class="text-center text-gray-500 py-10">No hay productos registrados aún.</p>
-  )}
-</div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-[var(--color-primary)]">{p.title}</h3>
+
+                    <p class="text-gray-700 text-sm mt-1">
+                      Categoría: <strong>{p.categories?.name ?? 'Sin categoría'}</strong>
+                    </p>
+
+                    <p class="text-gray-700 text-sm">
+                      Precio: <strong>${p.price ?? '-'}</strong>
+                    </p>
+
+                    <p class="text-gray-700 text-sm">
+                      Destacado: {p.featured ? '⭐' : '—'}
+                    </p>
+
+                    <div class="flex gap-4 mt-3 text-sm">
+                      <a href={`/admin/products/${p.id}`} class="text-blue-600 hover:underline">Editar</a>
+                      <a href={`/admin/products/delete?id=${p.id}`} class="text-red-600 hover:underline">Eliminar</a>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </>
+      ) : (
+        <p class="text-center text-gray-500 py-10">No hay productos registrados aún.</p>
+      )}
+    </div>
 
   </section>
-</BaseLayout>
+
+  <!-- 🔥 SCRIPT FILTROS -->
+  <script is:inline>
+    const filterCategory = document.getElementById("filterCategory");
+    const searchInput = document.getElementById("searchInput");
+
+    const desktopRows = document.querySelectorAll(".productRow");
+    const mobileCards = document.querySelectorAll(".productCard");
+
+    const applyFilters = () => {
+      const text = searchInput.value.toLowerCase();
+      const category = filterCategory.value;
+
+      const match = (itemTitle, itemCategory) => {
+        const matchText = itemTitle.includes(text);
+        const matchCat = category === "all" || category === itemCategory;
+        return matchText && matchCat;
+      };
+
+      desktopRows.forEach((row) => {
+        const title = row.dataset.title;
+        const cat = row.dataset.category;
+        row.style.display = match(title, cat) ? "" : "none";
+      });
+
+      mobileCards.forEach((card) => {
+        const title = card.dataset.title;
+        const cat = card.dataset.category;
+        card.style.display = match(title, cat) ? "" : "none";
+      });
+    };
+
+    searchInput.addEventListener("input", applyFilters);
+    filterCategory.addEventListener("change", applyFilters);
+  </script>
+</AdminLayout>
