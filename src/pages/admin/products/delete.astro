@@ -1,0 +1,35 @@
+---
+export const prerender = false
+
+import { supabase } from '../../../lib/supabase'
+
+// Proteger ruta
+const { data: sessionData } = await supabase.auth.getSession()
+if (!sessionData.session) {
+  return Astro.redirect('/admin/login')
+}
+
+// Obtener id desde query param
+const id = Astro.url.searchParams.get('id')
+
+if (!id) {
+  return Astro.redirect('/admin/products')
+}
+
+// 1. Obtener producto (para borrar la imagen)
+const { data: product } = await supabase.from('products').select('image_url').eq('id', id).single()
+
+if (product?.image_url) {
+  // Extraer filename desde la URL
+  const parts = product.image_url.split('/')
+  const filename = parts[parts.length - 1]
+
+  await supabase.storage.from('products').remove([filename])
+}
+
+// 2. Borrar fila de la tabla
+await supabase.from('products').delete().eq('id', id)
+
+// Volver al listado
+return Astro.redirect('/admin/products')
+---

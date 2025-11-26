@@ -1,0 +1,121 @@
+---
+export const prerender = false
+
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import { supabase } from '../../../lib/supabase'
+
+// Proteger ruta
+const { data: sessionData } = await supabase.auth.getSession()
+if (!sessionData.session) {
+  return Astro.redirect('/admin/login')
+}
+
+let errorMessage = null
+
+// Si POST → guardar producto
+if (Astro.request.method === 'POST') {
+  try {
+    const form = await Astro.request.formData()
+
+    const title = form.get('title') as string
+    const description = form.get('description') as string | null
+    const price = Number(form.get('price'))
+    const category = form.get('category') as string | null
+    const featured = form.get('featured') === 'on'
+    const imageFile = form.get('image') as File | null
+
+    let image_url = null
+
+    if (imageFile && imageFile.size > 0) {
+      const fileName = `${Date.now()}-${imageFile.name}`
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('products')
+        .upload(fileName, imageFile, {
+          contentType: imageFile.type
+        })
+
+      if (uploadError) {
+        console.error(uploadError)
+        throw new Error('Error subiendo imagen')
+      }
+
+      const { data: publicUrl } = supabase.storage.from('products').getPublicUrl(uploadData.path)
+
+      image_url = publicUrl.publicUrl
+    }
+
+    const { error: insertError } = await supabase.from('products').insert({
+      title,
+      description,
+      price,
+      category,
+      featured,
+      image_url
+    })
+
+    if (insertError) {
+      console.error(insertError)
+      throw new Error('Error guardando producto')
+    }
+
+    return Astro.redirect('/admin/products')
+  } catch (err) {
+    const e = err as Error
+    errorMessage = e.message
+  }
+}
+---
+
+<BaseLayout title="Nuevo Producto">
+  <section class="min-h-screen px-6 py-10 bg-gray-100">
+    <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-8 text-center">
+      ➕ Crear Nuevo Producto
+    </h1>
+
+    <div class="bg-white shadow-xl rounded-xl p-8 max-w-3xl mx-auto">
+      {errorMessage && <p class="text-red-600 text-center mb-4">{errorMessage}</p>}
+
+      <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 gap-6">
+        <div>
+          <label class="font-semibold">Título</label>
+          <input type="text" name="title" required class="border rounded-lg px-4 py-3 w-full" />
+        </div>
+
+        <div>
+          <label class="font-semibold">Descripción</label>
+          <textarea name="description" class="border rounded-lg px-4 py-3 w-full"></textarea>
+        </div>
+
+        <div>
+          <label class="font-semibold">Precio</label>
+          <input type="number" name="price" min="0" class="border rounded-lg px-4 py-3 w-full" />
+        </div>
+
+        <div>
+          <label class="font-semibold">Categoría</label>
+          <input type="text" name="category" class="border rounded-lg px-4 py-3 w-full" />
+        </div>
+
+        <div>
+          <label class="font-semibold">Imagen</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            class="border rounded-lg px-4 py-3 w-full"
+          />
+        </div>
+
+        <div class="flex items-center gap-3">
+          <input type="checkbox" name="featured" id="featured" />
+          <label for="featured">Destacado (más vendido)</label>
+        </div>
+
+        <button type="submit" class="btn-primary mt-4 w-full text-center">
+          Guardar Producto
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>

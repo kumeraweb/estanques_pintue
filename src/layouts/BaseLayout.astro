@@ -2,6 +2,8 @@
 import { SITE } from '../data/site'
 import '../styles/global.css'
 import FloatingButtons from '../components/FloatingButtons.astro'
+import Navbar from '../components/Navbar.astro'
+import Footer from '../components/Footer.astro'
 
 const { title, description, domain, image, locale } = SITE
 ---
@@ -66,10 +68,15 @@ const { title, description, domain, image, locale } = SITE
     </script>
   </head>
 
-  <body class="bg-white text-gray-900">
-    <slot />
-    <FloatingButtons />
+  <body class="bg-white text-gray-900 min-h-screen flex flex-col">
+    <Navbar />
 
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+    <FloatingButtons />
     <script is:inline>
       document.addEventListener('DOMContentLoaded', () => {
         const reveals = document.querySelectorAll('.reveal')

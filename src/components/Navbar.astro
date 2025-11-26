@@ -1,14 +1,15 @@
 ---
 import { MoreHorizontal, X, MessageCircle } from 'lucide-astro'
+import { LINKS } from '../data/site'
 
 const links = [
   { name: 'Inicio', href: '/' },
-  { name: 'Catálogo', href: '#catalogo' },
-  { name: 'Galería', href: '#galeria' },
-  { name: 'Contacto', href: '#contacto' }
+  { name: 'Catálogo', href: '/catalogo' },
+  { name: 'Los más comprados', href: '/#destacados' },
+  { name: 'Contacto', href: '/#contacto' }
 ]
 
-const wa = 'https://wa.me/569XXXXXXXX?text=Hola!%20Quiero%20cotizar%20un%20estanque'
+const wa = LINKS.wa()
 ---
 
 <nav class="fixed top-0 left-0 w-full z-50 bg-transparent text-white">
@@ -50,9 +51,9 @@ const wa = 'https://wa.me/569XXXXXXXX?text=Hola!%20Quiero%20cotizar%20un%20estan
     <button
       id="mobileMenuBtn"
       class="md:hidden flex items-center justify-center w-11 h-11
-       bg-white/30 text-white rounded-full
-       backdrop-blur-sm border border-white/40
-       shadow-md hover:bg-white/40 transition"
+  bg-black/40 text-white rounded-full
+  backdrop-blur-sm
+  shadow-md hover:bg-black/60 transition"
     >
       <MoreHorizontal class="w-6 h-6" />
     </button>

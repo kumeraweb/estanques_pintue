@@ -1,7 +1,9 @@
 ---
 import { MessageCircle } from 'lucide-astro'
 
-const wa = 'https://wa.me/569XXXXXXXX?text=Hola!%20Quiero%20cotizar%20un%20estanque'
+import { LINKS } from '../data/site'
+
+const wa = LINKS.wa()
 
 const illustration = '/imgs/bg_hero.png'
 
@@ -29,18 +31,18 @@ const photos = ['/imgs/1.jpeg', '/imgs/2.jpeg', '/imgs/3.jpeg', '/imgs/4.jpeg', 
       <h1
         class="text-3xl sm:text-6xl font-extrabold leading-tight text-white text-contrast mb-4 animate-fade-up-delay-1"
       >
-        Estanques Acuáticos Artesanales
+        Dale vida a tu jardín con un estanque hecho a medida
       </h1>
 
       <p
         class="text-base sm:text-xl text-white/90 text-contrast mb-6 max-w-md leading-relaxed animate-fade-up-delay-2"
       >
-        Naturaleza viva, peces koi, plantas acuáticas y diseños personalizados...
+        Fabricación personalizada en Pintué — calidad garantizada y entrega rápida
       </p>
 
       <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 animate-fade-up-delay-3">
         <a
-          href="#catalogo"
+          href="/catalogo"
           class="bg-[var(--color-primary)] text-white text-center font-semibold px-6 py-3 rounded-full shadow-lg hover:opacity-90 transition"
         >
           Ver Catálogo

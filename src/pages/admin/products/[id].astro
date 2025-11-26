@@ -1,0 +1,111 @@
+---
+export const prerender = false
+
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import { supabase } from '../../../lib/supabase'
+import type { Product } from '../../../types/database'
+
+// Proteger ruta
+const { data: sessionData } = await supabase.auth.getSession()
+if (!sessionData.session) {
+  return Astro.redirect('/admin/login')
+}
+
+// Obtener ID desde la ruta
+const id = Astro.params.id
+
+// Obtener producto
+const { data: product, error } = await supabase.from('products').select('*').eq('id', id).single()
+
+if (error || !product) {
+  console.error(error)
+  return Astro.redirect('/admin/products')
+}
+
+// Manejo del formulario (POST)
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData()
+
+  const title = form.get('title') as string
+  const description = form.get('description') as string
+  const price = Number(form.get('price'))
+  const featured = form.get('featured') === 'on'
+
+  let image_url = product.image_url
+
+  const file = form.get('image') as File | null
+
+  // Si subió una imagen nueva
+  if (file && file.size > 0) {
+    const fileName = `${Date.now()}-${file.name}`
+    const { data: imgData } = await supabase.storage.from('products').upload(fileName, file)
+
+    if (imgData) {
+      const { data: publicUrlData } = supabase.storage.from('products').getPublicUrl(fileName)
+
+      image_url = publicUrlData.publicUrl
+    }
+  }
+
+  // Actualizar producto
+  await supabase
+    .from('products')
+    .update({
+      title,
+      description,
+      price,
+      featured,
+      image_url
+    })
+    .eq('id', id)
+
+  return Astro.redirect('/admin/products')
+}
+---
+
+<BaseLayout title="Editar Producto">
+  <section class="min-h-screen px-6 py-10 bg-gray-100">
+    <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-6 text-center">
+      ✏️ Editar Producto
+    </h1>
+
+    <form
+      method="post"
+      enctype="multipart/form-data"
+      class="bg-white shadow-xl rounded-xl p-6 max-w-2xl mx-auto flex flex-col gap-4"
+    >
+      <label class="font-medium">Título</label>
+      <input
+        type="text"
+        name="title"
+        value={product.title}
+        required
+        class="border rounded-lg px-4 py-3"
+      />
+
+      <label class="font-medium">Descripción</label>
+      <textarea name="description" class="border rounded-lg px-4 py-3" rows="4"
+        >{product.description}</textarea
+      >
+
+      <label class="font-medium">Precio</label>
+      <input
+        type="number"
+        name="price"
+        value={product.price ?? ''}
+        required
+        class="border rounded-lg px-4 py-3"
+      />
+
+      <label class="font-medium flex items-center gap-2">
+        <input type="checkbox" name="featured" checked={product.featured} />
+        Producto destacado
+      </label>
+
+      <label class="font-medium">Reemplazar imagen (opcional)</label>
+      <input type="file" name="image" accept="image/*" class="border rounded-lg px-4 py-3" />
+
+      <button class="btn-primary mt-4" type="submit">💾 Guardar cambios</button>
+    </form>
+  </section>
+</BaseLayout>

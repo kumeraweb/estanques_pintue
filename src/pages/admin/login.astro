@@ -1,0 +1,85 @@
+---
+export const prerender = false
+import { supabase } from '../../lib/supabase'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+// Obtener error
+const error = Astro.url.searchParams.get('error') ?? null
+
+// SOLO manejar el formulario si es POST
+if (Astro.request.method === 'POST') {
+  const contentType = Astro.request.headers.get('content-type') || ''
+
+  // Aseguramos que sea un form válido
+  if (!contentType.includes('form')) {
+    console.warn('Request sin form válida, ignorando…')
+  } else {
+    const form = await Astro.request.formData()
+    const email = form.get('email') as string
+    const password = form.get('password') as string
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error) {
+      return Astro.redirect(`/admin/login?error=${encodeURIComponent('Credenciales incorrectas')}`)
+    }
+
+    return Astro.redirect('/admin')
+  }
+}
+---
+
+<BaseLayout title="Login Administrador">
+  <section class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+      <h2 class="text-2xl font-bold text-center mb-6 text-[var(--color-primary)]">
+        Panel Administrador
+      </h2>
+
+      {error && <p class="text-red-600 text-center mb-4">{error}</p>}
+
+      <form method="post" class="flex flex-col gap-4">
+        <input
+          type="email"
+          name="email"
+          placeholder="Correo"
+          required
+          class="border rounded-lg px-4 py-3 focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+        />
+
+        <div class="relative">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Contraseña"
+            required
+            class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+          />
+
+          <!-- Botón ojito -->
+          <button
+            type="button"
+            id="togglePassword"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            👁️
+          </button>
+        </div>
+
+        <script is:inline>
+          const toggle = document.getElementById('togglePassword')
+          const pass = document.getElementById('password')
+
+          toggle.addEventListener('click', () => {
+            const isHidden = pass.type === 'password'
+            pass.type = isHidden ? 'text' : 'password'
+            toggle.textContent = isHidden ? '🙈' : '👁️'
+          })
+        </script>
+
+        <button type="submit" class="btn-primary w-full mt-2"> Ingresar </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>

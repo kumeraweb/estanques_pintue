@@ -1,0 +1,119 @@
+---
+export const prerender = false
+
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import { supabase } from '../../../lib/supabase'
+import type { Product } from '../../../types/database'
+
+// Proteger ruta
+const { data: sessionData } = await supabase.auth.getSession()
+if (!sessionData.session) {
+  return Astro.redirect('/admin/login')
+}
+
+// Obtener productos
+const { data: products, error } = await supabase
+  .from('products')
+  .select('*')
+  .order('created_at', { ascending: false })
+
+if (error) {
+  console.error('Error cargando productos:', error)
+}
+---
+
+<BaseLayout title="Productos">
+  <section class="min-h-screen px-6 py-10 bg-gray-100">
+    <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-8 text-center">📦 Productos</h1>
+
+    <div class="flex justify-center mb-8">
+      <a href="/admin/products/new" class="btn-primary">➕ Crear Producto</a>
+    </div>
+
+    <div class="bg-white shadow-xl rounded-xl p-6 max-w-5xl mx-auto">
+
+  {products && products.length > 0 ? (
+    <>
+      <!-- DESKTOP TABLE -->
+      <table class="hidden sm:table w-full border-collapse">
+        <thead>
+          <tr class="text-left border-b">
+            <th class="py-3 px-2">Imagen</th>
+            <th class="py-3 px-2">Título</th>
+            <th class="py-3 px-2">Precio</th>
+            <th class="py-3 px-2">Destacado</th>
+            <th class="py-3 px-2">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {products.map((p: Product) => (
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-2 px-2">
+                {p.image_url ? (
+                  <img src={p.image_url} alt={p.title} class="w-16 h-16 object-cover rounded-lg" />
+                ) : (
+                  <span class="text-gray-400 italic">Sin imagen</span>
+                )}
+              </td>
+
+              <td class="py-2 px-2 font-medium">{p.title}</td>
+
+              <td class="py-2 px-2">${p.price ?? '-'}</td>
+
+              <td class="py-2 px-2">{p.featured ? '⭐' : '—'}</td>
+
+              <td class="py-2 px-2 flex gap-3">
+                <a href={`/admin/products/${p.id}`} class="text-blue-600 hover:underline">Editar</a>
+                <a href={`/admin/products/delete?id=${p.id}`} class="text-red-600 hover:underline">Eliminar</a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <!-- MOBILE CARDS -->
+      <div class="sm:hidden flex flex-col gap-4">
+        {products.map((p: Product) => (
+          <div class="border rounded-xl p-4 flex gap-4 shadow hover:shadow-md transition">
+            <img
+              src={p.image_url}
+              alt={p.title}
+              class="w-20 h-20 object-cover rounded-lg"
+            />
+
+            <div class="flex-1">
+              <h3 class="font-semibold text-[var(--color-primary)]">{p.title}</h3>
+
+              <p class="text-gray-700 text-sm mt-1">
+                Precio: <strong>${p.price ?? '-'}</strong>
+              </p>
+
+              <p class="text-gray-700 text-sm">
+                Destacado: {p.featured ? '⭐' : '—'}
+              </p>
+
+              <div class="flex gap-4 mt-3 text-sm">
+                <a href={`/admin/products/${p.id}`} class="text-blue-600 hover:underline">
+                  Editar
+                </a>
+                <a
+                  href={`/admin/products/delete?id=${p.id}`}
+                  class="text-red-600 hover:underline"
+                >
+                  Eliminar
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </>
+  ) : (
+    <p class="text-center text-gray-500 py-10">No hay productos registrados aún.</p>
+  )}
+</div>
+
+  </section>
+</BaseLayout>

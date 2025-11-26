@@ -1,24 +1,21 @@
 ---
-const products = [
-  {
-    name: 'Barrica Acuática 80L',
-    img: '/imgs/1.jpeg',
-    desc: 'Ideal para patios pequeños o terrazas.',
-    price: 'desde $79.000'
-  },
-  {
-    name: 'Barrica Acuática 120L',
-    img: '/imgs/2.jpeg',
-    desc: 'Mayor profundidad y espacio para plantas.',
-    price: 'desde $99.000'
-  },
-  {
-    name: 'Estanque Koi Premium',
-    img: '/imgs/3.jpeg',
-    desc: 'Diseño completo con peces y plantas.',
-    price: 'desde $159.000'
-  }
-]
+import { supabase } from '../lib/supabase'
+import { MessageCircle } from 'lucide-astro'
+import { LINKS } from '../data/site'
+
+const { data: rawFeatured, error } = await supabase
+  .from('products')
+  .select('*')
+  .eq('featured', true)
+  .order('created_at', { ascending: false })
+
+if (error) {
+  console.error('Error cargando destacados:', error)
+}
+
+const featured = rawFeatured ?? []
+
+LINKS.wa()
 ---
 
 <section id="destacados" class="py-24 px-6 reveal">
@@ -31,26 +28,48 @@ const products = [
 
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
     {
-      products.map((item) => (
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden group">
-          <img
-            src={item.img}
-            alt={item.name}
-            class="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
-          />
-          <div class="p-6 text-left">
-            <h3 class="text-xl font-semibold text-[var(--color-primary)] mb-1">{item.name}</h3>
-            <p class="text-gray-600 text-sm mb-4">{item.desc}</p>
-            <p class="text-lg font-bold text-[var(--color-primary)] mb-4">{item.price}</p>
-            <a
-              href="#contacto"
-              class="inline-block bg-[var(--color-primary)] text-white px-4 py-2 rounded-full font-semibold hover:opacity-90 transition"
-            >
-              Cotizar
-            </a>
+      (featured ?? []).length > 0 ? (
+        featured.map((item) => (
+          <div class="bg-white rounded-2xl shadow-lg overflow-hidden group">
+            <img
+              src={item.image_url}
+              alt={item.title}
+              class="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
+            />
+
+            <div class="p-6 text-left">
+              <h3 class="text-xl font-semibold text-[var(--color-primary)] mb-1">{item.title}</h3>
+
+              <p class="text-gray-600 text-sm mb-4">{item.description ?? ''}</p>
+
+              {item.price && (
+                <p class="text-lg font-bold text-[var(--color-primary)] mb-4">${item.price}</p>
+              )}
+
+              <a
+                href={LINKS.wa(`Hola! Me interesa el producto destacado: ${item.title}`)}
+                target="_blank"
+                class="flex flex-row justify-center bg-[var(--color-primary)] text-white px-4 py-2 w-full rounded-full font-semibold hover:opacity-90 transition flex items-center gap-2"
+              >
+                <MessageCircle class="w-4 h-4" />
+                Cotizar
+              </a>
+            </div>
           </div>
-        </div>
-      ))
+        ))
+      ) : (
+        <p class="text-center text-gray-500 col-span-3 py-6">
+          No hay productos destacados por ahora.
+        </p>
+      )
     }
+  </div>
+  <div class="text-center mt-12">
+    <a
+      href="/catalogo"
+      class="inline-block bg-[var(--color-primary)] text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition"
+    >
+      Ver Catálogo Completo →
+    </a>
   </div>
 </section>

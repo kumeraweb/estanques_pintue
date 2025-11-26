@@ -1,10 +1,10 @@
 ---
 import { MessageCircle } from 'lucide-astro'
-
-const wa = 'https://wa.me/569XXXXXXXX?text=Hola!%20Quiero%20saber%20más%20sobre%20los%20estanques'
+import { LINKS } from '../data/site'
+const wa = LINKS.wa()
 ---
 
-<section class="relative py-24 px-6 text-center reveal">
+<section id="contacto" class="relative py-24 px-6 text-center reveal">
   <!-- Fondo suave -->
   <div class="absolute inset-0 bg-[var(--color-accent)]/30 backdrop-blur-sm"></div>
 
