@@ -97,13 +97,19 @@ if (Astro.request.method === 'POST') {
       </textarea>
 
       <label class="font-medium">Precio</label>
+
+      <!-- Input visible con formato $xx.xxx -->
       <input
-        type="number"
-        name="price"
-        value={product.price ?? ''}
-        required
+        type="text"
+        id="priceDisplay"
         class="border rounded-lg px-4 py-3"
+        placeholder="$ 0"
+        value={new Intl.NumberFormat('es-CL').format(product.price)}
+        required
       />
+
+      <!-- Input real, limpio -->
+      <input type="hidden" name="price" id="priceReal" value={product.price} />
 
       <!-- Categoría -->
       <label class="font-medium">Categoría</label>
@@ -132,3 +138,31 @@ if (Astro.request.method === 'POST') {
     </form>
   </section>
 </AdminLayout>
+<script is:inline>
+  const formatCLP = (value) => {
+    return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0
+    }).format(value)
+  }
+
+  const display = document.getElementById('priceDisplay')
+  const real = document.getElementById('priceReal')
+
+  // Cuando se escribe en el input visible
+  display.addEventListener('input', () => {
+    let raw = display.value.replace(/\D/g, '')
+
+    if (raw === '') {
+      display.value = ''
+      real.value = ''
+      return
+    }
+
+    const numberValue = parseInt(raw, 10)
+
+    display.value = formatCLP(numberValue)
+    real.value = numberValue
+  })
+</script>

@@ -91,7 +91,18 @@ if (Astro.request.method === 'POST') {
 
         <div>
           <label class="font-semibold">Precio</label>
-          <input type="number" name="price" min="0" class="border rounded-lg px-4 py-3 w-full" />
+
+          <!-- INPUT visible (formatea CLP) -->
+          <input
+            type="text"
+            id="priceDisplay"
+            class="border rounded-lg px-4 py-3 w-full"
+            placeholder="Ej $10.000"
+            required
+          />
+
+          <!-- INPUT real que se envía -->
+          <input type="hidden" name="price" id="priceReal" />
         </div>
 
         <!-- SELECT dinámico -->
@@ -125,3 +136,31 @@ if (Astro.request.method === 'POST') {
     </div>
   </section>
 </AdminLayout>
+
+<script is:inline>
+  const formatCLP = (value) => {
+    return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0
+    }).format(value)
+  }
+
+  const display = document.getElementById('priceDisplay')
+  const real = document.getElementById('priceReal')
+
+  display.addEventListener('input', () => {
+    let raw = display.value.replace(/\D/g, '') // quitar todo excepto números
+
+    if (raw === '') {
+      display.value = ''
+      real.value = ''
+      return
+    }
+
+    const numberValue = parseInt(raw, 10)
+
+    display.value = formatCLP(numberValue)
+    real.value = numberValue
+  })
+</script>
