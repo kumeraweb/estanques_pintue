@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro'
+import AdminLayout from '../../layouts/AdminLayout.astro'
 import { supabase } from '../../lib/supabase'
 
 // 1. Obtener sesión del usuario
@@ -19,7 +19,7 @@ if (Astro.request.method === 'POST') {
 }
 ---
 
-<BaseLayout title="Panel Admin">
+<AdminLayout>
   <section class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4 py-20">
     <div class="bg-white shadow-xl rounded-xl p-10 w-full max-w-2xl text-center">
       <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-3">Bienvenido al Panel</h1>
@@ -46,4 +46,4 @@ if (Astro.request.method === 'POST') {
       </div>
     </div>
   </section>
-</BaseLayout>
+</AdminLayout>
