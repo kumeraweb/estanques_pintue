@@ -1,8 +1,8 @@
 ---
 import { MessageCircle } from 'lucide-astro'
 import { LINKS } from '../data/site'
+import { formatCLP } from '../utils/format'
 
-// Props que recibirá el componente
 const {
   title,
   description,
@@ -25,24 +25,36 @@ const {
     <!-- Categoría como pastilla -->
     {
       category_name && (
-        <span class="inline-block text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full mb-3">
+        <span class="inline-block text-[11px] sm:text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full mb-3">
           {category_name}
         </span>
       )
     }
 
-    <!-- Título -->
-    <h3 class="text-xl font-semibold text-[var(--color-primary)] mb-1">
+    <!-- Título: puede ocupar varias líneas -->
+    <h3
+      class="text-lg sm:text-xl font-semibold text-[var(--color-primary)] mb-1
+             leading-snug break-words whitespace-normal"
+    >
       {title}
     </h3>
 
-    <!-- Descripción -->
-    <p class="text-gray-600 text-sm mb-4">
+    <!-- Descripción: también libre -->
+    <p
+      class="text-xs sm:text-sm text-gray-600 mb-4
+             leading-snug break-words whitespace-normal"
+    >
       {description ?? ''}
     </p>
 
     <!-- Precio -->
-    {price && <p class="text-lg font-bold text-[var(--color-primary)] mb-4">${price}</p>}
+    {
+      price && (
+        <p class="text-base sm:text-lg font-bold text-[var(--color-primary)] mb-4">
+          {formatCLP(price)}
+        </p>
+      )
+    }
 
     <!-- Botón WhatsApp -->
     <a
