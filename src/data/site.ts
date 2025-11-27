@@ -4,7 +4,7 @@ export const SITE = {
   description:
     'Fabricamos estanques de agua de alta resistencia en Pintué. Calidad garantizada, entrega rápida y atención personalizada.',
   domain: 'https://www.estanquespintue.cl',
-  image: '/imgs/og-estanquespintue.png',
+  image: '/imgs/og-image-v2.png',
   locale: 'es_CL'
 }
 
