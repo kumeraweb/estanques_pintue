@@ -4,6 +4,7 @@ import '../styles/global.css'
 import FloatingButtons from '../components/FloatingButtons.astro'
 import Navbar from '../components/Navbar.astro'
 import Footer from '../components/Footer.astro'
+import PromoBanner from '../components/PromoBanner.astro'
 
 const { title, description, domain, image, locale } = SITE
 ---
@@ -85,6 +86,7 @@ const { title, description, domain, image, locale } = SITE
     <Navbar />
 
     <main class="flex-1">
+      <PromoBanner />
       <slot />
     </main>
 

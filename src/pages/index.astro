@@ -6,6 +6,7 @@ import Hero from '../components/Hero.astro'
 import WhyUs from '../components/WhyUs.astro'
 import FeaturedProducts from '../components/FeaturedProducts.astro'
 import CTA from '../components/CTA.astro'
+import PromoBanner from '../components/PromoBanner.astro'
 ---
 
 <BaseLayout>
@@ -15,6 +16,7 @@ import CTA from '../components/CTA.astro'
     ) : (
       <>
         <Hero />
+        <PromoBanner />
         <WhyUs />
         <FeaturedProducts />
         <CTA />
