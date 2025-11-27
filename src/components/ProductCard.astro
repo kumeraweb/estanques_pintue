@@ -32,20 +32,18 @@ const {
     }
 
     <!-- Título: puede ocupar varias líneas -->
-    <h3
-      class="text-lg sm:text-xl font-semibold text-[var(--color-primary)] mb-1
-             leading-snug break-words whitespace-normal"
-    >
-      {title}
-    </h3>
+    <div class="flex flex-col gap-2 min-h-[120px] max-h-[140px] overflow-x-visible">
+      <h3
+        class="text-lg sm:text-xl font-semibold text-[var(--color-primary)]
+           leading-snug break-words whitespace-normal"
+      >
+        {title}
+      </h3>
 
-    <!-- Descripción: también libre -->
-    <p
-      class="text-xs sm:text-sm text-gray-600 mb-4
-             leading-snug break-words whitespace-normal"
-    >
-      {description ?? ''}
-    </p>
+      <p class="text-xs sm:text-sm text-gray-600 leading-snug break-words whitespace-normal">
+        {description ?? ''}
+      </p>
+    </div>
 
     <!-- Precio -->
     {
