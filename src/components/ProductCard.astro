@@ -13,7 +13,7 @@ const {
 } = Astro.props
 ---
 
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden group flex flex-col min-h-[460px]">
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden group">
   <!-- Imagen -->
   <img
     src={image_url}
@@ -21,9 +21,8 @@ const {
     class="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
   />
 
-  <!-- Contenido -->
-  <div class="p-6 text-left flex flex-col flex-grow">
-    <!-- Categoría -->
+  <div class="p-6 text-left">
+    <!-- Categoría como pastilla -->
     {
       category_name && (
         <span class="inline-block text-[11px] sm:text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full mb-3">
@@ -32,37 +31,39 @@ const {
       )
     }
 
-    <div class="flex flex-col gap-2 min-h-[120px] max-h-[140px]">
-      <h3
-        class="text-lg sm:text-xl font-semibold text-[var(--color-primary)]
-           leading-snug break-words whitespace-normal"
-      >
-        {title}
-      </h3>
+    <!-- Título: puede ocupar varias líneas -->
+    <h3
+      class="text-lg sm:text-xl font-semibold text-[var(--color-primary)] mb-1
+             leading-snug break-words whitespace-normal"
+    >
+      {title}
+    </h3>
 
-      <p class="text-xs sm:text-sm text-gray-600 leading-snug break-words whitespace-normal">
-        {description ?? ''}
-      </p>
-    </div>
+    <!-- Descripción: también libre -->
+    <p
+      class="text-xs sm:text-sm text-gray-600 mb-4
+             leading-snug break-words whitespace-normal"
+    >
+      {description ?? ''}
+    </p>
 
-    <!-- Sección inferior (precio + botón) siempre al fondo -->
-    <div class="mt-auto pt-2">
-      {
-        price && (
-          <p class="text-base sm:text-lg font-bold text-[var(--color-primary)] mb-3">
-            Desde {formatCLP(price)}
-          </p>
-        )
-      }
+    <!-- Precio -->
+    {
+      price && (
+        <p class="text-base sm:text-lg font-bold text-[var(--color-primary)] mb-4">
+          {formatCLP(price)}
+        </p>
+      )
+    }
 
-      <a
-        href={LINKS.wa(`Hola! Me interesa el producto: ${title}`)}
-        target="_blank"
-        class="flex items-center justify-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2 rounded-full font-semibold hover:opacity-90 transition"
-      >
-        <MessageCircle class="w-4 h-4" />
-        Cotizar
-      </a>
-    </div>
+    <!-- Botón WhatsApp -->
+    <a
+      href={LINKS.wa(`Hola! Me interesa el producto: ${title}`)}
+      target="_blank"
+      class="flex items-center justify-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2 rounded-full font-semibold hover:opacity-90 transition"
+    >
+      <MessageCircle class="w-4 h-4" />
+      Cotizar
+    </a>
   </div>
 </div>
