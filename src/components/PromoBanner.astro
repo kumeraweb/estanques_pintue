@@ -1,9 +1,48 @@
-<div class="bg-teal-600 text-white py-2">
-  <div class="marquee-container">
-    <span class="marquee-track font-semibold text-sm">
-      🎄 20% de descuento en todas las categorías · 💬 Envía #CUPONNAVIDAD al WhatsApp y obtén el el
-      tuyo 🎁 · 🎄 20% de descuento en todas las categorías · 💬 Envía #CUPONNAVIDAD al WhatsApp y
-      obtén el tuyo! 🎁 ·
-    </span>
+---
+import { Tag, Ticket } from 'lucide-astro'
+---
+
+<div class="bg-white border-b border-gray-200 py-3 px-4 shadow-sm z-[60]">
+  <div
+    class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left"
+  >
+    <div class="flex items-center gap-2 text-lg font-bold text-gray-800">
+      <Tag class="w-5 h-5 text-teal-700" />
+      <span>20% de descuento en Estanques</span>
+    </div>
+
+    <div class="hidden sm:block h-6 w-px bg-gray-300"></div>
+
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1 text-sm font-medium text-gray-700">
+        <Ticket class="w-4 h-4 text-teal-700" />
+        <span>Cupón: <strong>#CUPONNAVIDAD</strong></span>
+      </div>
+
+      <button
+        id="copy-btn"
+        class="px-3 py-1 text-xs font-semibold bg-teal-700 text-white rounded-lg hover:bg-teal-800 active:scale-95 transition-all"
+        onclick="copyCoupon()"
+      >
+        Copiar cupón
+      </button>
+    </div>
+
+    <div class="hidden sm:block h-6 w-px bg-gray-300"></div>
+
+    <div class="text-xs sm:text-sm text-gray-600 sm:ml-auto opacity-90">
+      Envíalo por WhatsApp para hacerlo válido · Hasta el 31 de diciembre
+    </div>
   </div>
 </div>
+
+<script>
+  function copyCoupon() {
+    navigator.clipboard.writeText('#CUPONNAVIDAD')
+    const btn = document.getElementById('copy-btn')
+    if (btn) {
+      btn.innerText = '¡Copiado!'
+      setTimeout(() => (btn.innerText = 'Copiar cupón'), 2000)
+    }
+  }
+</script>

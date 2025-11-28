@@ -25,28 +25,9 @@ const featuredList = featured ?? []
   {
     featuredList.length > 0 ? (
       <>
-        <!-- 📱 MOBILE: CARRUSEL -->
         <div class="md:hidden flex gap-6 overflow-x-auto whitespace-nowrap pb-4 snap-x snap-mandatory max-w-6xl mx-auto">
-          {
-            featuredList.map((item) => (
-              <div class="min-w-[260px] snap-start">
-                <ProductCard
-                  title={item.title}
-                  description={item.description}
-                  price={item.price}
-                  image_url={item.image_url}
-                  category_name={item.categories?.name}
-                  isFeatured={true}
-                />
-              </div>
-            ))
-          }
-        </div>
-
-        <!-- 🖥️ DESKTOP: GRID -->
-        <div class="hidden md:grid sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
-          {
-            featuredList.map((item) => (
+          {featuredList.map((item) => (
+            <div class="min-w-[260px] snap-start">
               <ProductCard
                 title={item.title}
                 description={item.description}
@@ -55,8 +36,21 @@ const featuredList = featured ?? []
                 category_name={item.categories?.name}
                 isFeatured={true}
               />
-            ))
-          }
+            </div>
+          ))}
+        </div>
+
+        <div class="hidden md:grid sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
+          {featuredList.map((item) => (
+            <ProductCard
+              title={item.title}
+              description={item.description}
+              price={item.price}
+              image_url={item.image_url}
+              category_name={item.categories?.name}
+              isFeatured={true}
+            />
+          ))}
         </div>
       </>
     ) : (
