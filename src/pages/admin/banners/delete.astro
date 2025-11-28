@@ -1,0 +1,32 @@
+---
+export const prerender = false
+
+import { supabase } from '../../../lib/supabase'
+
+// Proteger ruta
+const { data: sessionData } = await supabase.auth.getSession()
+if (!sessionData.session) return Astro.redirect('/admin/login')
+
+// ID desde query param
+const id = Astro.url.searchParams.get('id')
+if (!id) return Astro.redirect('/admin/banners')
+
+// Obtener banner (para borrar la imagen)
+const { data: banner } = await supabase.from('banners').select('image_url').eq('id', id).single()
+
+// Borrar imagen del bucket si existe
+if (banner?.image_url) {
+  // path interno: banners/filename.jpg
+  const path = banner.image_url.split('/object/public/')[1]
+
+  if (path) {
+    await supabase.storage.from('banners').remove([path])
+  }
+}
+
+// Borrar fila de la tabla
+await supabase.from('banners').delete().eq('id', id)
+
+// Redirigir al listado
+return Astro.redirect('/admin/banners')
+---

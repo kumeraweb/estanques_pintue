@@ -1,0 +1,86 @@
+---
+// @ts-check
+export const prerender = false
+
+import AdminLayout from '../../../layouts/AdminLayout.astro'
+import { supabase } from '../../../lib/supabase'
+
+// Proteger ruta
+const { data: sessionData } = await supabase.auth.getSession()
+if (!sessionData.session) {
+  return Astro.redirect('/admin/login')
+}
+
+let errorMessage = null
+
+if (Astro.request.method === 'POST') {
+  try {
+    const form = await Astro.request.formData()
+
+    const is_active = form.get('is_active') === 'on'
+    const imageFile = form.get('image') as File | null
+
+    if (!imageFile || imageFile.size === 0) {
+      throw new Error('Debes subir una imagen')
+    }
+
+    // Subir imagen
+    const fileName = `${Date.now()}-${imageFile.name}`
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('banners')
+      .upload(fileName, imageFile, { contentType: imageFile.type })
+
+    if (uploadError) throw new Error('Error subiendo imagen')
+
+    // URL pública
+    const { data: publicUrl } = supabase.storage.from('banners').getPublicUrl(uploadData.path)
+    const image_url = publicUrl.publicUrl
+
+    // Insertar en tabla
+    const { error: insertError } = await supabase.from('banners').insert({
+      image_url,
+      is_active
+    })
+
+    if (insertError) throw new Error('Error guardando banner')
+
+    return Astro.redirect('/admin/banners')
+  } catch (err) {
+    const e = err as Error
+    errorMessage = e.message
+  }
+}
+---
+
+<AdminLayout>
+  <section class="min-h-screen px-6 py-24 bg-gray-100">
+    <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-8 text-center">
+      ➕ Crear Nuevo Banner
+    </h1>
+
+    <div class="bg-white shadow-xl rounded-xl p-8 max-w-2xl mx-auto">
+      {errorMessage && <p class="text-red-600 text-center mb-4">{errorMessage}</p>}
+
+      <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 gap-6">
+        <div>
+          <label class="font-semibold">Imagen del banner</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            required
+            class="border rounded-lg px-4 py-3 w-full"
+          />
+        </div>
+
+        <div class="flex items-center gap-3">
+          <input type="checkbox" name="is_active" id="is_active" />
+          <label for="is_active">¿Activar este banner?</label>
+        </div>
+
+        <button type="submit" class="btn-primary mt-4 w-full text-center"> Guardar Banner </button>
+      </form>
+    </div>
+  </section>
+</AdminLayout>

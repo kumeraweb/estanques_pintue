@@ -1,0 +1,71 @@
+---
+export const prerender = false
+
+import AdminLayout from '../../../layouts/AdminLayout.astro'
+import { supabase } from '../../../lib/supabase'
+
+// Proteger ruta
+const { data: sessionData } = await supabase.auth.getSession()
+if (!sessionData.session) {
+  return Astro.redirect('/admin/login')
+}
+
+// Obtener banners
+const { data: banners, error } = await supabase
+  .from('banners')
+  .select('*')
+  .order('created_at', { ascending: false })
+
+if (error) {
+  console.error('Error cargando banners:', error)
+}
+---
+
+<AdminLayout>
+  <section class="min-h-screen px-6 py-10 bg-gray-100">
+    <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-8 text-center">🖼️ Banners</h1>
+
+    <!-- BOTÓN CREAR -->
+    <div class="flex justify-center mb-10">
+      <a href="/admin/banners/new" class="btn-primary">➕ Crear Banner</a>
+    </div>
+
+    <div class="bg-white shadow-xl rounded-xl p-6 max-w-4xl mx-auto">
+      {
+        banners && banners.length > 0 ? (
+          <div class="flex flex-col gap-6">
+            {banners.map((b) => (
+              <div class="border rounded-xl p-4 flex gap-6 shadow-md items-center justify-between">
+                <img src={b.image_url} alt="Banner" class="w-48 h-24 object-cover rounded-lg" />
+
+                <div class="flex flex-col gap-2 flex-1">
+                  <p class="text-sm">
+                    <strong>Estado:</strong> {b.is_active ? '🟢 Activo' : '⚪ Inactivo'}
+                  </p>
+                  <p class="text-sm text-gray-600">
+                    <strong>Creado:</strong> {new Date(b.created_at).toLocaleString('es-CL')}
+                  </p>
+                </div>
+
+                <div class="flex flex-col gap-3 text-sm">
+                  <a
+                    href={`/admin/banners/toggle?id=${b.id}`}
+                    class="text-blue-600 hover:underline"
+                  >
+                    {b.is_active ? 'Desactivar' : 'Activar'}
+                  </a>
+
+                  <a href={`/admin/banners/delete?id=${b.id}`} class="text-red-600 hover:underline">
+                    Eliminar
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p class="text-center text-gray-500 py-10">No hay banners creados aún.</p>
+        )
+      }
+    </div>
+  </section>
+</AdminLayout>
