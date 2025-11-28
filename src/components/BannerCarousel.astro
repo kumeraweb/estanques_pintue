@@ -17,7 +17,7 @@ if (!banners || banners.length === 0) {
     <div class="flex gap-4 transition-transform duration-700 ease-out" id="bannerCarousel">
       {
         banners.map((b) => (
-          <div class="w-full h-[160px] md:h-[220px] flex-shrink-0">
+          <div class="w-full aspect-[900/375] md:aspect-[1200/500] flex-shrink-0">
             <img src={b.image_url} class="w-full h-full object-cover rounded-2xl" />
           </div>
         ))
