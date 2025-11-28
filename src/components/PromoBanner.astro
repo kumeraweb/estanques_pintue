@@ -1,5 +1,10 @@
 ---
-import { Tag, Ticket } from 'lucide-astro'
+import { Tag, Ticket, MessageCircle } from 'lucide-astro'
+const wa =
+  'https://wa.me/56977995073?text=' +
+  encodeURIComponent(
+    'Hola! Me interesan los productos y tengo mi cupón de Navidad 🎄 #CUPONNAVIDAD'
+  )
 ---
 
 <div class="bg-white border-b border-gray-200 py-3 px-4 shadow-sm z-[60]">
@@ -19,43 +24,19 @@ import { Tag, Ticket } from 'lucide-astro'
         <span>Cupón: <strong>#CUPONNAVIDAD</strong></span>
       </div>
 
-      <button
-        id="copy-btn"
-        class="px-3 py-1 text-xs font-semibold bg-teal-700 text-white rounded-lg hover:bg-teal-800 active:scale-95 transition-all"
-        onclick="copyCoupon()"
+      <a
+        href={wa}
+        target="_blank"
+        class="flex items-center gap-1 px-3 py-1 text-xs font-semibold bg-teal-700 text-white rounded-lg hover:bg-teal-800 active:scale-95 transition-all"
       >
-        Copiar cupón
-      </button>
-
-      <input
-        id="hidden-coupon"
-        type="text"
-        value="#CUPONNAVIDAD"
-        class="absolute opacity-0 pointer-events-none h-0 w-0"
-      />
+        Enviar cupon
+      </a>
     </div>
 
     <div class="hidden sm:block h-6 w-px bg-gray-300"></div>
 
     <div class="text-xs sm:text-sm text-gray-600 sm:ml-auto opacity-90">
-      Envíalo por WhatsApp para hacerlo válido · Hasta el 31 de diciembre
+      Para validar tu cupón envíalo por WhatsApp · Hasta el 31 de diciembre
     </div>
   </div>
 </div>
-
-<script is:inline>
-  function copyCoupon() {
-    const input = document.getElementById('hidden-coupon')
-    input.type = 'text'
-    input.select()
-    input.setSelectionRange(0, 99999)
-    document.execCommand('copy')
-    input.type = 'hidden'
-
-    const btn = document.getElementById('copy-btn')
-    if (btn) {
-      btn.innerText = '¡Copiado!'
-      setTimeout(() => (btn.innerText = 'Copiar cupón'), 2000)
-    }
-  }
-</script>
