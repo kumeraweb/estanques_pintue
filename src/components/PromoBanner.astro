@@ -26,6 +26,13 @@ import { Tag, Ticket } from 'lucide-astro'
       >
         Copiar cupón
       </button>
+
+      <input
+        id="hidden-coupon"
+        type="text"
+        value="#CUPONNAVIDAD"
+        class="absolute opacity-0 pointer-events-none h-0 w-0"
+      />
     </div>
 
     <div class="hidden sm:block h-6 w-px bg-gray-300"></div>
@@ -36,9 +43,15 @@ import { Tag, Ticket } from 'lucide-astro'
   </div>
 </div>
 
-<script>
+<script is:inline>
   function copyCoupon() {
-    navigator.clipboard.writeText('#CUPONNAVIDAD')
+    const input = document.getElementById('hidden-coupon')
+    input.type = 'text'
+    input.select()
+    input.setSelectionRange(0, 99999)
+    document.execCommand('copy')
+    input.type = 'hidden'
+
     const btn = document.getElementById('copy-btn')
     if (btn) {
       btn.innerText = '¡Copiado!'
