@@ -1,5 +1,5 @@
 ---
-import { Tag, Ticket } from 'lucide-astro'
+import { X, Ticket } from 'lucide-astro'
 
 const wa =
   'https://wa.me/56954161984?text=' +
@@ -9,64 +9,50 @@ const wa =
 ---
 
 <div
-  class="bg-gradient-to-r from-white to-teal-50 border-b border-teal-200
-            py-4 px-4 shadow-sm z-[60] ring-1 ring-teal-100"
+  id="promoSlide"
+  class="fixed bottom-4 right-4 sm:right-6 z-[9999]
+         bg-white border border-teal-600 text-teal-900 shadow-xl rounded-xl
+         px-4 py-3 flex items-center gap-3 w-[85%] sm:w-auto
+         translate-x-[120%] opacity-0 transition-all duration-700 ease-out"
 >
-  <div
-    class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left"
-  >
-    <!-- Descuento destacado -->
-    <div class="flex items-center gap-2 text-lg font-extrabold text-teal-900">
-      <Tag class="w-5 h-5 text-teal-700" />
-      <span>🎄 20% en Estanques</span>
-    </div>
-
-    <!-- Divider -->
-    <div class="hidden sm:block h-6 w-px bg-teal-300"></div>
-
-    <!-- Cupón + CTA -->
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-1 text-sm font-medium text-teal-800">
-        <Ticket class="w-4 h-4 text-teal-700" />
-        <span>Cupón: <strong>#CUPONNAVIDAD</strong></span>
-      </div>
-
-      <a
-        href={wa}
-        target="_blank"
-        class="flex items-center gap-2 px-3 py-1.5 text-xs font-bold
-               bg-teal-700 text-white rounded-lg hover:bg-teal-800
-               active:scale-95 transition-all shadow-md"
-      >
-        Enviar cupon →
-      </a>
-    </div>
-
-    <!-- Divider -->
-    <div class="hidden sm:block h-6 w-px bg-teal-300"></div>
-
-    <!-- Subtexto animado -->
-    <div
-      class="text-xs sm:text-sm text-teal-700 sm:ml-auto opacity-95
-                motion-safe:animate-fadeInUp"
-    >
-      Hasta el 31 de diciembre · Valídalo por WhatsApp
+  <!-- Texto -->
+  <div class="text-sm font-semibold">
+    🎄 ¡-20% en Estanques!
+    <div class="text-xs font-medium text-teal-700">
+      Cupón: <strong>#CUPONNAVIDAD</strong>
     </div>
   </div>
+
+  <!-- CTA -->
+  <a
+    href={wa}
+    class="bg-teal-700 text-white text-xs font-bold px-3 py-1 rounded-lg
+           hover:bg-teal-800 active:scale-95 transition"
+    target="_blank"
+  >
+    Enviar →
+  </a>
+
+  <!-- Botón cerrar -->
+  <button id="promoClose" class="text-gray-400 hover:text-teal-600">
+    <X class="w-4 h-4" />
+  </button>
 </div>
 
-<style>
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(6px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  .animate-fadeInUp {
-    animation: fadeInUp 0.6s ease-out forwards;
-  }
-</style>
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('promoSlide')
+    const btnClose = document.getElementById('promoClose')
+
+    // Mostrar después de 5 segundos
+    setTimeout(() => {
+      banner.classList.remove('translate-x-[120%]', 'opacity-0')
+      banner.classList.add('translate-x-0', 'opacity-100')
+    }, 5000)
+
+    // Botón cerrar
+    btnClose.addEventListener('click', () => {
+      banner.classList.add('translate-x-[120%]', 'opacity-0')
+    })
+  })
+</script>
