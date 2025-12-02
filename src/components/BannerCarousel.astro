@@ -1,5 +1,6 @@
 ---
 import { supabase } from '../lib/supabase'
+import { LINKS } from '../data/site'
 
 const { data: banners } = await supabase
   .from('banners')
@@ -17,8 +18,13 @@ if (!banners || banners.length === 0) {
     <div class="flex gap-4 transition-transform duration-700 ease-out" id="bannerCarousel">
       {
         banners.map((b) => (
-          <div class="w-full aspect-[900/375] md:aspect-[1200/500] flex-shrink-0">
-            <img src={b.image_url} class="w-full h-full object-cover rounded-2xl" />
+          <div class="w-full aspect-[900/375] md:aspect-[1200/500] flex-shrink-0 cursor-pointer">
+            <a href={LINKS.ig()} target="_blank" rel="noopener noreferrer">
+              <img
+                src={b.image_url}
+                class="w-full h-full object-cover rounded-2xl cursor-pointer hover:opacity-90 transition"
+              />
+            </a>
           </div>
         ))
       }
