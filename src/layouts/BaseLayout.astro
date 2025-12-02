@@ -130,5 +130,25 @@ const { title, description, domain, image, locale } = SITE
         reveals.forEach((el) => observer.observe(el))
       })
     </script>
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        const conversionLinks = document.querySelectorAll('[data-conversion="whatsapp"]')
+
+        conversionLinks.forEach((link) => {
+          link.addEventListener('click', function (e) {
+            const url = this.href
+
+            // Evita que el link navegue inmediatamente
+            e.preventDefault()
+
+            // Llama a la conversión
+            gtag_report_conversion(url)
+
+            // Devuelve false por seguridad adicional
+            return false
+          })
+        })
+      })
+    </script>
   </body>
 </html>
